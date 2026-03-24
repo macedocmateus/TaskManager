@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { ZodError, z } from 'zod'
-import { AppError } from '@/utils/AppError'
+import { AppError } from '@/utils/AppError.js'
 
 export function errorHandling(
   error: any,
