@@ -25,13 +25,71 @@ enum TaskPriority {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  name      String
-  email     String
-  password  String
-  role      UserRole  @default(member)
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
+  id            String        @id @default(uuid())
+  name          String
+  email         String
+  password      String
+  role          UserRole      @default(member)
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime?     @updatedAt @map("updated_at")
+  teamMembers   TeamMember[]
+  tasks         Task[]
+  taskHistories TaskHistory[]
 
   @@map("users")
+}
+
+model Team {
+  id          String       @id @default(uuid())
+  name        String
+  description String
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime?    @updatedAt @map("updated_at")
+  teamMembers TeamMember[]
+  tasks       Task[]
+
+  @@map("teams")
+}
+
+model TeamMember {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  teamId    String   @map("team_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+  team Team @relation(fields: [teamId], references: [id])
+
+  @@map("team_members")
+}
+
+model Task {
+  id          String       @id @default(uuid())
+  title       String
+  description String
+  status      TaskStatus   @default(pending)
+  priority    TaskPriority @default(low)
+  assignedTo  String       @map("assigned_to")
+  teamId      String       @map("team_id")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime?    @updatedAt @map("updated_at")
+
+  assigned      User          @relation(fields: [assignedTo], references: [id])
+  team          Team          @relation(fields: [teamId], references: [id])
+  taskHistories TaskHistory[]
+
+  @@map("tasks")
+}
+
+model TaskHistory {
+  id         String     @id @default(uuid())
+  taskId     String     @map("task_id")
+  changedBy  String     @map("changed_by")
+  oldStatus  TaskStatus
+  new_status TaskStatus
+
+  task    Task @relation(fields: [taskId], references: [id])
+  changed User @relation(fields: [changedBy], references: [id])
+
+  @@map("tasks_history")
 }
