@@ -82,11 +82,11 @@ model Task {
 }
 
 model TaskHistory {
-  id         String     @id @default(uuid())
-  taskId     String     @map("task_id")
-  changedBy  String     @map("changed_by")
-  oldStatus  TaskStatus
-  new_status TaskStatus
+  id        String     @id @default(uuid())
+  taskId    String     @map("task_id")
+  changedBy String     @map("changed_by")
+  oldStatus TaskStatus @map("old_status")
+  newStatus TaskStatus @map("new_status")
 
   task    Task @relation(fields: [taskId], references: [id])
   changed User @relation(fields: [changedBy], references: [id])
