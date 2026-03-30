@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { verify } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { authConfig } from '@/configs/auth.js'
 import { AppError } from '@/utils/AppError.js'
 
@@ -22,6 +22,8 @@ function ensureAuthenticated(
 
     const [, token] = authHeader.split(' ')
 
+    const { verify } = jwt
+
     const { role, sub: user_id } = verify(
       token,
       authConfig.jwt.secret,
@@ -37,3 +39,5 @@ function ensureAuthenticated(
     throw new AppError('Invalid JWT token', 401)
   }
 }
+
+export { ensureAuthenticated }
