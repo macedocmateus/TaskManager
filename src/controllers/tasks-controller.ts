@@ -54,6 +54,82 @@ class TasksController {
 
     return response.status(201).json(task)
   }
+
+  async index(request: Request, response: Response) {
+    if (!request.user) {
+      throw new AppError('Unauthorized', 401)
+    }
+
+    const { id, role } = request.user
+
+    const where = role === 'admin' ? {} : { assignedTo: id }
+
+    const tasks = await prisma.task.findMany({ where })
+
+    return response.status(200).json(tasks)
+  }
+
+  async update(request: Request, response: Response) {
+    const paramsSchema = z.object({
+      id: z.uuid(),
+    })
+
+    const bodySchema = z.object({
+      title: z.string().min(3).optional(),
+      description: z.string().min(3).nullish(),
+      status: z.enum(['pending', 'in_progress', 'completed']).optional(),
+      priority: z.enum(['high', 'medium', 'low']).optional(),
+    })
+
+    const { id } = paramsSchema.parse(request.params)
+
+    const { title, description, status, priority } = bodySchema.parse(
+      request.body,
+    )
+
+    if (!request.user) {
+      throw new AppError('Unauthorized', 401)
+    }
+
+    const task = await prisma.task.findUnique({ where: { id } })
+
+    if (!task) {
+      throw new AppError('Task not found')
+    }
+
+    const { id: userId, role } = request.user
+
+    if (role === 'member' && task.assignedTo !== userId) {
+      throw new AppError('Unauthorized', 401)
+    }
+
+    const updatedTask = await prisma.task.update({
+      where: { id },
+      data: { title, description, status, priority },
+    })
+
+    return response.status(200).json(updatedTask)
+  }
+
+  async remove(request: Request, response: Response) {
+    const paramsSchema = z.object({
+      id: z.uuid(),
+    })
+
+    const { id } = paramsSchema.parse(request.params)
+
+    const task = await prisma.task.findUnique({ where: { id } })
+
+    if (!task) {
+      throw new AppError('Task not found')
+    }
+
+    const removedTask = await prisma.task.delete({
+      where: { id },
+    })
+
+    return response.status(200).send()
+  }
 }
 
 export { TasksController }

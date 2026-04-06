@@ -98,7 +98,13 @@ class TeamMembersController {
       throw new AppError('Team not found')
     }
 
-    const teamMembers = await prisma.teamMember.findMany({ where: { teamId } })
+    const teamMembers = await prisma.teamMember.findMany({
+      where: { teamId },
+      include: {
+        user: { select: { name: true } },
+        team: { select: { name: true } },
+      },
+    })
 
     return response.status(200).json(teamMembers)
   }

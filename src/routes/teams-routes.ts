@@ -9,6 +9,9 @@ const teamsRoutes = Router()
 const teamsController = new TeamsController()
 const teamMembersController = new TeamMembersController()
 
+// middleware global
+//teamsRoutes.use(ensureAuthenticated, verifyUserAuthorization(['admin']))
+
 teamsRoutes.post(
   '/',
   ensureAuthenticated,
