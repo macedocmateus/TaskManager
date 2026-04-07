@@ -75,8 +75,8 @@ class TasksController {
     })
 
     const bodySchema = z.object({
-      title: z.string().min(3).optional(),
-      description: z.string().min(3).nullish(),
+      title: z.string().trim().min(3).optional(),
+      description: z.string().trim().min(3).nullish(),
       status: z.enum(['pending', 'in_progress', 'completed']).optional(),
       priority: z.enum(['high', 'medium', 'low']).optional(),
     })
@@ -88,7 +88,7 @@ class TasksController {
     )
 
     if (!request.user) {
-      throw new AppError('Unauthorized', 401)
+      throw new AppError('User not authenticated')
     }
 
     const task = await prisma.task.findUnique({ where: { id } })
@@ -100,7 +100,7 @@ class TasksController {
     const { id: userId, role } = request.user
 
     if (role === 'member' && task.assignedTo !== userId) {
-      throw new AppError('Unauthorized', 401)
+      throw new AppError('You can only edit your own tasks')
     }
 
     const updatedTask = await prisma.task.update({
@@ -124,7 +124,7 @@ class TasksController {
       throw new AppError('Task not found')
     }
 
-    const removedTask = await prisma.task.delete({
+    await prisma.task.delete({
       where: { id },
     })
 

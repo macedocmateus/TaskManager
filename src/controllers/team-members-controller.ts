@@ -78,7 +78,7 @@ class TeamMembersController {
       throw new AppError('User is not a member of this team')
     }
 
-    const teamMember = await prisma.teamMember.delete({
+    await prisma.teamMember.delete({
       where: { id: alreadyMember.id },
     })
 
