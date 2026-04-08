@@ -116,6 +116,17 @@ class TasksController {
       data: { title, description, status, priority },
     })
 
+    if (status && status !== task.status) {
+      await prisma.taskHistory.create({
+        data: {
+          taskId: id,
+          changedBy: userId,
+          newStatus: status,
+          oldStatus: task.status,
+        },
+      })
+    }
+
     return response.status(200).json(updatedTask)
   }
 
