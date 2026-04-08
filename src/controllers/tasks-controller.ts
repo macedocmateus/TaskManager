@@ -56,6 +56,13 @@ class TasksController {
   }
 
   async index(request: Request, response: Response) {
+    const querySchema = z.object({
+      status: z.enum(['pending', 'in_progress', 'completed']).optional(),
+      priority: z.enum(['high', 'medium', 'low']).optional(),
+    })
+
+    const { status, priority } = querySchema.parse(request.query)
+
     if (!request.user) {
       throw new AppError('Unauthorized', 401)
     }
@@ -63,8 +70,9 @@ class TasksController {
     const { id, role } = request.user
 
     const where = role === 'admin' ? {} : { assignedTo: id }
+    const filters = { ...where, status, priority }
 
-    const tasks = await prisma.task.findMany({ where })
+    const tasks = await prisma.task.findMany({ where: filters })
 
     return response.status(200).json(tasks)
   }
