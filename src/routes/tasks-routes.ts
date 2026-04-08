@@ -1,11 +1,13 @@
 import { Router } from 'express'
 
 import { TasksController } from '@/controllers/tasks-controller.js'
+import { TasksHistoryController } from '@/controllers/tasks-history-controller.js'
 import { ensureAuthenticated } from '@/middlewares/ensure-authenticated.js'
 import { verifyUserAuthorization } from '@/middlewares/verifyUserAuthorization.js'
 
 const tasksRoutes = Router()
 const tasksController = new TasksController()
+const tasksHistoryController = new TasksHistoryController()
 
 tasksRoutes.post(
   '/',
@@ -30,6 +32,12 @@ tasksRoutes.delete(
   ensureAuthenticated,
   verifyUserAuthorization(['admin']),
   tasksController.remove,
+)
+tasksRoutes.get(
+  '/:id/history',
+  ensureAuthenticated,
+  verifyUserAuthorization(['admin', 'member']),
+  tasksHistoryController.index,
 )
 
 export { tasksRoutes }
