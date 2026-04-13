@@ -7,7 +7,9 @@ const config: Config = {
   testEnvironment: 'node',
   testMatch: ['<rootDir>/src/**/*.spec.ts'],
   moduleNameMapper: {
+    '^@/(.*)\\.js$': '<rootDir>/src/$1.ts',
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^(\\.\\.?/.*)\\.js$': '$1',
   },
   extensionsToTreatAsEsm: ['.ts'],
   transform: {
