@@ -3,10 +3,15 @@
   "version": "1.0.0",
   "description": "API de gerenciamento de tarefas",
   "main": "index.js",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "dev": "tsx watch --include src/docs/swagger.yml src/server.ts",
+    "start": "node build/server.js",
     "test:dev": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest --watchAll --runInBand",
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest --runInBand"
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest --runInBand",
+    "build": "tsup"
   },
   "keywords": [],
   "author": "Mateus de Castro Macedo",
@@ -43,6 +48,7 @@
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
+    "tsup": "^8.5.1",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2"
   }

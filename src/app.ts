@@ -1,7 +1,6 @@
-import 'dotenv/config'
-
 import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import cors from 'cors'
 import express from 'express'
 import { load } from 'js-yaml'
@@ -9,8 +8,10 @@ import { JsonObject, serve, setup } from 'swagger-ui-express'
 import { errorHandling } from '@/middlewares/error-handling.js'
 import { routes } from '@/routes/index.js'
 
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
 const swaggerDocument = load(
-  readFileSync(resolve('src/docs/swagger.yml'), 'utf-8'),
+  readFileSync(resolve(__dirname, 'docs', 'swagger.yml'), 'utf-8'),
 ) as JsonObject
 
 const app = express()
