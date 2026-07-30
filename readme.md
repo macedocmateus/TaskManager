@@ -31,7 +31,7 @@ API REST de gerenciamento de tarefas em equipe, desenvolvida com **Node.js**, **
 **1. Clone o repositório**
 
 ```bash
-git clone https://github.com/seu-usuario/TaskManager.git
+git clone https://github.com/macedocmateus/TaskManager.git
 cd TaskManager
 ```
 
